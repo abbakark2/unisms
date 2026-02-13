@@ -13,6 +13,11 @@ class FacultyController extends Controller
         $faculties = Faculty::get();
         return response()->json(["Faculties" => $faculties], 200);
     }
+    public function getFacultiesData()
+    {
+        $faculties = Faculty::with('departments')->get();
+        return response()->json(["Faculties" => $faculties], 200);
+    }
 
     public function addFaculty(Request $request)
     {
@@ -37,7 +42,7 @@ class FacultyController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             // Unique validation but ignores the current faculty ID
-            'abbreviation' => 'required|string|max:10|unique:faculties,abbreviation,',
+            'abbreviation' => 'required|string|max:10|unique:faculties,abbreviation,' . $faculty->id,
         ]);
 
         $faculty->name = $request->name;

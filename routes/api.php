@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard', [DashboardController::class, "Dashboard"]);
     Route::post('/logout', [AuthController::class, "Logout"]);
     Route::get('/admin/faculties', [FacultyController::class, "getFaculties"]);
+    Route::get('/admin/faculties/data', [FacultyController::class, "getFacultiesData"]);
     Route::post('/admin/faculties', [FacultyController::class, "addFaculty"]);
     Route::put('/admin/faculty/{faculty}', [FacultyController::class, "update"]);
     Route::delete('/admin/faculty/{faculty}', [FacultyController::class, "delete"]);
