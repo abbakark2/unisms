@@ -17,6 +17,13 @@ return new class extends Migration
                 ->constrained()
                 ->restrictOnDelete();
 
+
+            $table->foreignId('faculty_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+
             $table->foreignId('department_id')
                 ->nullable()
                 ->after('role_id')
@@ -24,8 +31,9 @@ return new class extends Migration
                 ->nullOnDelete();
 
             $table->string('phone')->nullable()->after('email');
-            $table->unsignedTinyInteger('level')->nullable()->after('phone');
-            $table->boolean('is_active')->default(true)->after('level');
+            $table->string('dob')->nullable()->after('phone');
+
+            $table->boolean('is_active')->default(true);
         });
     }
 

@@ -19,6 +19,13 @@ class FacultyController extends Controller
         return response()->json(["Faculties" => $faculties], 200);
     }
 
+    public function getDepartmentsByFacultyId(Faculty $faculty)
+    {
+
+        $faculty = Faculty::with('departments')->where('id', $faculty->id)->first();
+        return response()->json(["faculty" => $faculty], 200);
+    }
+
     public function addFaculty(Request $request)
     {
         $request->validate([

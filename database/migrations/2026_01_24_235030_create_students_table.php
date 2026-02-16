@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('matric_number')->unique();
             $table->year('admission_year')->nullable();
             $table->year('graduation_year')->nullable();
-            $table->unsignedTinyInteger('current_level');
-
+            $table->enum('level', ['100', '200', '300', '400', '500'])
+              ->nullable();
             $table->enum('status', [
                 'active',
                 'spillover',
