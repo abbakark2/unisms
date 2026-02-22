@@ -18,7 +18,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::with('user', 'department')->paginate(10);
+        $students = Student::with('user', 'user.department')->paginate(10);
         return response()->json($students);
     }
 
@@ -38,6 +38,8 @@ class StudentController extends Controller
                     'department_id' => $request->department_id,
                     'phone' => $request->phone,
                     'is_active' => 1,
+                    'dob' => $request->date_of_birth,
+                    'faculty_id' => $request->faculty_id,
 
                 ]);
 
@@ -132,32 +134,34 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateStudentRequest $request, string $id)
+    public function update(UpdateStudentRequest $request, Student $student)
     {
-        $student = Student::find($id);
-
-        if (!$student) {
-            return response()->json(['message' => 'Student not found'], 404);
-        }
-
-        DB::beginTransaction();
-
         try {
-            $student->update($request->validated());
 
-            if ($request->has('name') || $request->has('email')) {
-                $student->user->update([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                ]);
-            }
+            DB::transaction(function () use ($request, $student) {
 
-            DB::commit();
+                $student->update($request->studentData());
 
-            return response()->json($student);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Failed to update student.'], 500);
+                $student->user->update($request->userData());
+
+            });
+
+            return response()->json(
+                $student->load('user')
+            );
+
+        } catch (\Throwable $e) {
+
+            Log::error('Student update failed', [
+                'student_id' => $student->id,
+                'request'    => $request->safe()->toArray(),
+                'error'      => $e->getMessage(),
+                'trace'      => $e->getTraceAsString(),
+                'user_id'    => auth()->id(),
+                'ip'         => $request->ip(),
+            ]);
+
+            throw $e; // IMPORTANT — rethrow it
         }
     }
 

@@ -14,7 +14,7 @@ class Student extends Model
         'matric_number',
         'admission_year',
         'graduation_year',
-        'current_level',
+        'level',
         'status',
         'middle_name',
         'date_of_birth',

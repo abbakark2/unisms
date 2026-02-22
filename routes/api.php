@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CourseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/faculties/{faculty}/departments', [FacultyController::class, "getDepartmentsByFacultyId"]);
 });
 
-// Department Protected Route
+// Department
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/admin/dept', [DepartmentController::class, "show"]);
     Route::post('/admin/dept', [DepartmentController::class, "add"]);
@@ -37,13 +38,18 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::delete('/admin/dept/{department}', [DepartmentController::class, "delete"]);
 });
 
-// Student Protected Route
+// Student
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/students', [StudentController::class, 'index']);
     Route::post('/admin/students', [StudentController::class, 'store']);
-    Route::get('/admin/students/{id}', [StudentController::class, 'show']);
-    Route::put('/admin/students/{id}', [StudentController::class, 'update']);
-    Route::delete('/admin/students/{id}', [StudentController::class, 'destroy']);
+    Route::get('/admin/students/{student}', [StudentController::class, 'show']);
+    Route::put('/admin/students/{student}', [StudentController::class, 'update']);
+    Route::delete('/admin/students/{student}', [StudentController::class, 'destroy']);
     // Add route for fetching student stats
     Route::get('/admin/students/stats', [StudentController::class, 'stats']);
+});
+
+// Course
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/admin/courses', CourseController::class);
 });

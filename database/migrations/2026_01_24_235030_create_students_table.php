@@ -23,8 +23,11 @@ return new class extends Migration
             $table->year('graduation_year')->nullable();
             $table->enum('level', ['100', '200', '300', '400', '500'])
               ->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->unsignedBigInteger('entry_session_id')->nullable();
             $table->enum('status', [
                 'active',
+                'inactive',
                 'spillover',
                 'graduated',
                 'withdrawn'

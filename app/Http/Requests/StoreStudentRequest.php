@@ -25,7 +25,7 @@ class StoreStudentRequest extends FormRequest
             'admission_year' => 'required|integer|min:1900|max:' . date('Y'),
             'graduation_year' => 'required|integer|gte:admission_year|max:' . (date('Y') + 10),
             'current_level' => 'required|integer',
-            'status' => 'required|in:active,spillover,graduated,withdrawn',
+            'status' => 'required|in:active,inactive,spillover,graduated,withdrawn',
             'name' => 'required|string|max:255',
             'date_of_birth' => 'date',
             'gender' => 'required|in:male,female,other',
