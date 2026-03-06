@@ -12,6 +12,9 @@ class AuthController extends Controller
 {
     public function Login(LoginRequest $request)
     {
+        // debugging
+        // return response()->json(['message' => 'Debugging login request', 'data' => $request->all()]);
+
         $request->validated($request->all());
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return response()->json([

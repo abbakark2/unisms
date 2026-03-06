@@ -9,12 +9,37 @@ use Illuminate\Http\Request;
 class DepartmentController extends Controller
 {
     //Get all Department
-    public function show(){
+    public function show(Request $request)
+    {
         $dept = Department::with('faculty')->get();
-        if($dept->isEmpty()) {
-            return response()->json(["message" => "No department found"], 404);
+
+        if ($dept->isEmpty()) {
+            return response()->json([
+                "status" => false,
+                "message" => "No departments found",
+                "data" => []
+            ], 404);
         }
-        return response()->json(["Departments"=>$dept,"message"=>"fetch list of department successfully", "status" => true],200);
+
+        $departments = $dept->map(function ($department) {
+            return [
+                "id" => $department->id,
+                "name" => $department->name,
+                "faculty" => [
+                    "id" => $department->faculty->id,
+                    "name" => $department->faculty->name,
+                    "abbreviation" => $department->faculty->abbreviation,
+                ],
+                "created_at" => $department->created_at ? $department->created_at->toIso8601String() : null,
+                "updated_at" => $department->updated_at ? $department->updated_at->toIso8601String() : null,
+            ];
+        });
+
+        return response()->json([
+            "status" => true,
+            "message" => "Departments fetched successfully",
+            "data" => $departments
+        ], 200);
     }
 
     public function add(Request $request)
