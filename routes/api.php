@@ -33,9 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
 // Department
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/admin/dept', [DepartmentController::class, "show"]);
-    Route::post('/admin/dept', [DepartmentController::class, "add"]);
-    Route::put('/admin/dept/{department}', [DepartmentController::class, "update"]);
-    Route::delete('/admin/dept/{department}', [DepartmentController::class, "delete"]);
+    Route::post('/admin/departments', [DepartmentController::class, "add"]);
+    Route::put('/admin/departments/{department}', [DepartmentController::class, "update"]);
+    Route::delete('/admin/departments/{department}', [DepartmentController::class, "delete"]);
 });
 
 // Student
