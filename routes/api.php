@@ -51,5 +51,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Course
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('/admin/courses', CourseController::class);
+    Route::apiResource('/courses', CourseController::class);
 });

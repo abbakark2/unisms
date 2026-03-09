@@ -44,22 +44,14 @@ class StudentController extends Controller
                 ]);
 
                 $student = Student::create([
-                    'user_id'           => $user->id,
+                    'user_id'             => $user->id,
                     'matric_number'       => $request->matric_number,
                     'admission_year'      => $request->admission_year,
                     'graduation_year'     => $request->graduation_year,
                     'status'              => $request->status,
                     'mode_entry'          => $request->mode_entry,
-                    'level' => $request->current_level,
-
-                    // 'course'            => $request->course,
-                    // 'year_level'        => $request->year_level,
-                    // 'section'           => $request->section,
-                    // 'phone'             => $request->phone,
-                    // 'address'           => $request->address,
-                    // 'date_of_birth'     => $request->date_of_birth,
+                    'level'               => $request->level,
                     'gender'            => $request->gender,
-                    // 'enrollment_status' => $request->enrollment_status ?? 'pending',
                 ]);
 
                 return $student->load('user');
