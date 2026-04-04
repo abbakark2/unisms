@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+
+    public function getUser()
+    {
+        $user = auth()->user()->with('role')->where('email', auth()->user()->email)->first();
+        return response()->json($user, 200);
+    }
+
     public function Login(LoginRequest $request)
     {
         // debugging
@@ -22,7 +29,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::with('role')->where('email', $request->email)->first();
 
         $token = $user->createToken($user->name . 'Auth-Token')->plainTextToken;
 

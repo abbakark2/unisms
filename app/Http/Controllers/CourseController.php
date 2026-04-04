@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\In;
 
 class CourseController extends Controller
 {
@@ -36,5 +37,31 @@ class CourseController extends Controller
     {
         $course->delete();
         return response()->noContent();
+    }
+
+    public function deptLevelcourses(Request $request, $id, $semester, $level)
+    {
+
+        $dept_Id = $id;
+
+        $courses = Course::with('department')->where('department_id', $dept_Id)->where("level", $level)->where("semester", $semester)->get();
+
+        if(!$courses) {
+            return response()->json(["message" => "No courses found for the specified department and level"], 404);
+        }
+        $data = $courses->map(function($course) {
+            return [
+                "id" => $course->id,
+                "course_code" => $course->course_code,
+                "course_title" => $course->course_title,
+                "level" => $course->level,
+                "semester" => $course->semester,
+                "unit" => $course->unit,
+                "department_id" => $course->department_id,
+                "department" => $course->department->name ?? null,
+            ];
+        });
+
+        return response()->json($data);
     }
 }

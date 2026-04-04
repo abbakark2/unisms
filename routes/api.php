@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Academic_sessionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
@@ -9,9 +10,7 @@ use App\Http\Controllers\CourseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::get('/user', [AuthController::class, "getUser"] )->middleware('auth:sanctum');
 
 //public route
 Route::post('/login', [AuthController::class, "Login"]);
@@ -42,14 +41,20 @@ Route::middleware('auth:sanctum')->group(function(){
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/students', [StudentController::class, 'index']);
     Route::post('/admin/students', [StudentController::class, 'store']);
-    Route::get('/admin/students/{student}', [StudentController::class, 'show']);
+    // Route::get('/admin/students/{student}', [StudentController::class, 'show']);
+    Route::get('/student', [StudentController::class, 'show']);
     Route::put('/admin/students/{student}', [StudentController::class, 'update']);
     Route::delete('/admin/students/{student}', [StudentController::class, 'destroy']);
-    // Add route for fetching student stats
     Route::get('/admin/students/stats', [StudentController::class, 'stats']);
 });
 
 // Course
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/courses', CourseController::class);
+    Route::get('/{department}/courses/{semester}/{level}', [CourseController::class, "deptLevelCourses"]);
+});
+
+// Academic Sessions Routes
+Route::middleware('auth:sanctum')->group(function (){
+    Route::get('/academic/session', [Academic_sessionController::class, 'Index']);
 });

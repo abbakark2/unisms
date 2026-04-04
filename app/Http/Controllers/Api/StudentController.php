@@ -112,15 +112,31 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
-        $student = Student::with('user', 'department')->find($id);
-
+        $studentId = urldecode($request->query('id'));
+        $student = Student::with('user', 'user.department', 'user.faculty')->where('matric_number', $studentId)->first();
         if (!$student) {
             return response()->json(['message' => 'Student not found'], 404);
         }
 
-        return response()->json($student);
+        $data=[
+            "id" => $student->id,
+            "matric_number" =>$student->matric_number,
+            "name" => $student?->user->name,
+            "email" => $student->user->email,
+            "department" => $student->user->department->name ?? 'Unassigned',
+            "faculty" => $student->user->faculty->name ?? 'Unassigned',
+            "level" => $student->level,
+            "admission_year" => $student->admission_year,
+            "graduation_year" => $student->graduation_year,
+            "gender" => $student->gender,
+            "status" => $student->status,
+            "phone" => $student->user->phone,
+            "dob" => $student->user->dob,
+        ];
+
+        return response()->json($data);
     }
 
     /**
@@ -189,4 +205,6 @@ class StudentController extends Controller
             'inactive' => $inactive,
         ]);
     }
+
+
 }

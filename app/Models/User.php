@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\{Department, Role};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -57,5 +58,16 @@ class User extends Authenticatable
 
     public function department(){
         return $this->belongsTo(Department::class);
+    }
+    public function student(){
+        return $this->hasOne(Student::class);
+    }
+
+    public function faculty(){
+        return $this->belongsTo(Faculty::class);
+    }
+
+    public function role(){
+        return $this->belongsTo(Role::class);
     }
 }
