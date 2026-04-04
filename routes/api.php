@@ -57,4 +57,5 @@ Route::middleware('auth:sanctum')->group(function () {
 // Academic Sessions Routes
 Route::middleware('auth:sanctum')->group(function (){
     Route::get('/academic/session', [Academic_sessionController::class, 'Index']);
+    Route::put('/academic/session/{id}/toggle', [Academic_sessionController::class, 'toggleStatus']);
 });
