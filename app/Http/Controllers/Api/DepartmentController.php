@@ -30,8 +30,6 @@ class DepartmentController extends Controller
                     "name" => $department->faculty->name,
                     "abbreviation" => $department->faculty->abbreviation,
                 ],
-                "created_at" => $department->created_at ? $department->created_at->toIso8601String() : null,
-                "updated_at" => $department->updated_at ? $department->updated_at->toIso8601String() : null,
             ];
         });
 
@@ -49,9 +47,12 @@ class DepartmentController extends Controller
             'faculty_id' => 'required|exists:faculties,id',
         ]);
 
+        $code = strtoupper(substr($request->name, 0, 3)) . rand(100, 999);
+
         $dept = Department::create([
             'name' => $request->name,
             'faculty_id' => $request->faculty_id,
+            'code' => $code,
         ]);
 
         return response()->json(["message" => "Department added successfully", "Department" => $dept], 201);

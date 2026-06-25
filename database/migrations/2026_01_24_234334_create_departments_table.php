@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->foreignId('faculty_id')->constrained('faculties')->onDelete('cascade');
-
+            $table->string('name');
+            $table->string('code')->unique(); // e.g. CSC
+            $table->foreignId('faculty_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }

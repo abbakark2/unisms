@@ -27,20 +27,26 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->enum('semester', ['1st', '2nd']);
+            $table->boolean('is_carryover')->default(false);
+
+            $table->enum('status', ['pending', 'approved', 'rejected'])
+                ->default('approved');
+
+            // Audit — who registered this course (student self or admin)
+            $table->foreignId('registered_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
 
-            // Explicit short index name (IMPORTANT)
             $table->unique(
-                ['student_id', 'course_id', 'academic_session_id', 'semester'],
-                'cr_student_course_session_sem_unique'
+                ['student_id', 'course_id', 'academic_session_id'],
+                'cr_student_course_session_unique'
             );
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('course_registrations');

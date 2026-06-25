@@ -18,13 +18,24 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
+            $table->foreignId('department_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->string('matric_number')->unique();
             $table->year('admission_year')->nullable();
             $table->year('graduation_year')->nullable();
+
             $table->enum('level', ['100', '200', '300', '400', '500'])
-              ->nullable();
+                ->default('100');
+
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
-            $table->unsignedBigInteger('entry_session_id')->nullable();
+
+            $table->foreignId('entry_session_id')
+                ->nullable()
+                ->constrained('academic_sessions')
+                ->nullOnDelete();
+
             $table->enum('status', [
                 'active',
                 'inactive',
@@ -37,9 +48,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('students');

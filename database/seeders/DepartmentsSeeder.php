@@ -13,24 +13,27 @@ class DepartmentsSeeder extends Seeder
      */
     public function run(): void
     {
-        $scienceId = DB::table('faculties')->where('name', 'Faculty of Science')->value('id');
+        $scienceId     = DB::table('faculties')->where('name', 'Faculty of Science')->value('id');
         $engineeringId = DB::table('faculties')->where('name', 'Faculty of Engineering')->value('id');
-        $fes = DB::table('faculties')->where('name', 'Faculty of Environmental Studies')->value('id');
+        $fes           = DB::table('faculties')->where('name', 'Faculty of Environmental Studies')->value('id');
 
         DB::table('departments')->insert([
-            ['name' => 'Computer Science', 'faculty_id' => $scienceId],
-            ['name' => 'Mathematics', 'faculty_id' => $scienceId],
-            ['name' => 'Physics', 'faculty_id' => $scienceId],
+            // Science
+            ['name' => 'Computer Science',  'code' => 'CSC', 'faculty_id' => $scienceId],
+            ['name' => 'Mathematics',       'code' => 'MTH', 'faculty_id' => $scienceId],
+            ['name' => 'Physics',           'code' => 'PHY', 'faculty_id' => $scienceId],
 
-            ['name' => 'Electrical Engineering', 'faculty_id' => $engineeringId],
-            ['name' => 'Mechanical Engineering', 'faculty_id' => $engineeringId],
+            // Engineering
+            ['name' => 'Electrical Engineering', 'code' => 'EEE', 'faculty_id' => $engineeringId],
+            ['name' => 'Mechanical Engineering', 'code' => 'MEE', 'faculty_id' => $engineeringId],
 
-            ['name' => 'Architecture', 'faculty_id' => $fes],
-            ['name' => 'Building', 'faculty_id' => $fes],
-            ['name' => 'Fine Arts', 'faculty_id' => $fes],
-            ['name' => 'Industrial Design', 'faculty_id' => $fes],
-            ['name' => 'Geomatics', 'faculty_id' => $fes],
-            ['name' => 'Urban and Regional Planning', 'faculty_id' => $fes],
+            // Environmental Studies
+            ['name' => 'Architecture',              'code' => 'ARC', 'faculty_id' => $fes],
+            ['name' => 'Building',                  'code' => 'BLD', 'faculty_id' => $fes],
+            ['name' => 'Fine Arts',                 'code' => 'FAR', 'faculty_id' => $fes],
+            ['name' => 'Industrial Design',         'code' => 'IND', 'faculty_id' => $fes],
+            ['name' => 'Geomatics',                 'code' => 'GEO', 'faculty_id' => $fes],
+            ['name' => 'Urban and Regional Planning', 'code' => 'URP', 'faculty_id' => $fes],
         ]);
     }
 }

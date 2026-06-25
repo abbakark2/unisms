@@ -18,46 +18,35 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->foreignId('course_id')
-                ->constrained()
+            $table->foreignId('course_registration_id')
+                ->constrained('course_registrations')
                 ->cascadeOnDelete();
 
             $table->foreignId('academic_session_id')
-                ->constrained()
+                ->constrained('academic_sessions')
                 ->cascadeOnDelete();
-
-            $table->enum('semester', ['1st', '2nd']);
 
             $table->unsignedTinyInteger('first_ca')->default(0);
             $table->unsignedTinyInteger('second_ca')->default(0);
             $table->unsignedTinyInteger('attendance')->default(0);
             $table->unsignedTinyInteger('assignment')->default(0);
             $table->unsignedTinyInteger('exam')->default(0);
-
             $table->unsignedTinyInteger('total')->default(0);
+
             $table->string('grade', 2)->nullable();
             $table->decimal('grade_point', 3, 2)->nullable();
 
-            $table->enum('status', [
-                'pass',
-                'fail',
-                'carryover'
-            ])->nullable();
+            $table->enum('status', ['pass', 'fail', 'incomplete'])->nullable();
 
             $table->timestamps();
 
-            $table->unique([
-                'student_id',
-                'course_id',
-                'academic_session_id',
-                'semester'
-            ]);
+            $table->unique(
+                ['student_id', 'course_registration_id'],
+                'result_student_reg_unique'
+            );
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('results');

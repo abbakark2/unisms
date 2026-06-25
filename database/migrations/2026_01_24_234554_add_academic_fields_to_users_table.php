@@ -12,38 +12,29 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('role_id')
-                ->after('id')
-                ->constrained()
+            $table->foreign('role_id')
+                ->references('id')
+                ->on('roles')
                 ->restrictOnDelete();
 
-
-            $table->foreignId('faculty_id')
-                ->nullable()
-                ->constrained()
+            $table->foreign('faculty_id')
+                ->references('id')
+                ->on('faculties')
                 ->nullOnDelete();
 
-
-            $table->foreignId('department_id')
-                ->nullable()
-                ->after('role_id')
-                ->constrained()
+            $table->foreign('department_id')
+                ->references('id')
+                ->on('departments')
                 ->nullOnDelete();
-
-            $table->string('phone')->nullable()->after('email');
-            $table->string('dob')->nullable()->after('phone');
-
-            $table->boolean('is_active')->default(true);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropForeign(['role_id']);
+            $table->dropForeign(['faculty_id']);
+            $table->dropForeign(['department_id']);
         });
     }
 };

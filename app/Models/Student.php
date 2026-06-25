@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\{User, Result, Department, AcademicSession};
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\CourseRegistration;
 
 class Student extends Model
 {
@@ -11,41 +15,46 @@ class Student extends Model
 
     protected $fillable = [
         'user_id',
+        'department_id',
         'matric_number',
         'admission_year',
         'graduation_year',
         'level',
-        'status',
-        'middle_name',
-        'date_of_birth',
         'gender',
         'entry_session_id',
-        'faculty_id',
-        'department_id',
+        'status',
+        'mode_entry',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function department()
+    public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }
 
-    public function faculty()
+    public function entrySession(): BelongsTo
     {
-        return $this->belongsTo(Faculty::class);
+        return $this->belongsTo(AcademicSession::class, 'entry_session_id');
     }
 
-    public function results()
+    public function courseRegistrations(): HasMany
     {
-        // return $this->hasMany(Result::class);
+        return $this->hasMany(CourseRegistration::class);
     }
 
-    public function getFullNameAttribute()
+    public function results(): HasMany
     {
-        return trim($this->user->name . ' ' . $this->middle_name);
+        return $this->hasMany(Result::class);
+    }
+
+    // All courses registered in a specific session
+    public function registrationsForSession(int $sessionId): HasMany
+    {
+        return $this->courseRegistrations()
+            ->where('academic_session_id', $sessionId);
     }
 }

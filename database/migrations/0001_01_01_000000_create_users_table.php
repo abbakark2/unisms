@@ -15,8 +15,17 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('dob')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // Raw unsigned columns — FKs added later
+            $table->unsignedBigInteger('role_id')->nullable();
+            $table->unsignedBigInteger('faculty_id')->nullable();
+            $table->unsignedBigInteger('department_id')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
@@ -37,13 +46,10 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('academic_sessions', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique(); // 2023/2024
+            $table->string('name')->unique(); // e.g. 2024/2025
             $table->boolean('is_active')->default(false);
+            $table->enum('current_semester', ['1st', '2nd'])->nullable();
+            $table->date('registration_opens_at')->nullable();
+            $table->date('registration_closes_at')->nullable();
             $table->timestamps();
         });
     }

@@ -16,22 +16,19 @@ return new class extends Migration
             $table->string('course_code');
             $table->string('course_title');
             $table->unsignedTinyInteger('unit');
-            $table->unsignedTinyInteger('level');
+            $table->unsignedTinyInteger('level'); // 100, 200, 300, 400, 500
             $table->enum('semester', ['1st', '2nd']);
+            $table->boolean('is_elective')->default(false);
 
             $table->foreignId('department_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
             $table->timestamps();
-
             $table->unique(['course_code', 'department_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('courses');

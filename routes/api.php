@@ -2,13 +2,15 @@
 
 use App\Http\Controllers\Api\Academic_sessionController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CourseRegistrationController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\StudentController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/user', [AuthController::class, "getUser"] )->middleware('auth:sanctum');
 
@@ -46,12 +48,32 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/admin/students/{student}', [StudentController::class, 'update']);
     Route::delete('/admin/students/{student}', [StudentController::class, 'destroy']);
     Route::get('/admin/students/stats', [StudentController::class, 'stats']);
+
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Student-facing
+    Route::prefix('registration')->group(function () {
+        Route::get('preview', [CourseRegistrationController::class, 'preview']);
+        Route::post('/', [CourseRegistrationController::class, 'register']);
+        Route::delete('{registration}', [CourseRegistrationController::class, 'drop']);
+    });
+
+    // Admin-facing
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
+        Route::post(
+            'students/{student}/registration',
+            [CourseRegistrationController::class, 'adminRegister']
+        );
+    });
 });
 
 // Course
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/courses', CourseController::class);
     Route::get('/{department}/courses/{semester}/{level}', [CourseController::class, "deptLevelCourses"]);
+    Route::post('/course/registration', [CourseController::class, "registerCourses"]);
 });
 
 // Academic Sessions Routes

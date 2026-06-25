@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('Users', function (Blueprint $table) {
-            // $table->string('dob')->nullable()->after('phone');
-
+        Schema::table('students', function (Blueprint $table) {
+            $table->string('mode_entry')->nullable();
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('Users', function (Blueprint $table) {
-           //
-
+        Schema::table('students', function (Blueprint $table) {
+            $table->dropColumn('mode_entry');
         });
     }
 };

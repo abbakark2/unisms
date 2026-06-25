@@ -17,7 +17,7 @@ class StoreCourseRequest extends FormRequest
             'course_code' => 'required|string|max:255|unique:courses,course_code',
             'course_title' => 'required|string|max:255',
             'unit' => 'required|integer|min:1|max:6',
-            'level' => 'required|integer|min:1|max:7',
+            'level' => 'required|in:100,200,300,400,500,600',
             'semester' => 'required|in:1st,2nd',
             'department_id' => 'required|exists:departments,id',
         ];

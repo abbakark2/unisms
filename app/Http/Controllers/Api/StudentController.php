@@ -18,8 +18,19 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::with('user', 'user.department')->paginate(10);
-        return response()->json($students);
+        $students = Student::with(['user', 'department']);
+
+
+        return response()->json([
+            'data' => $students->paginate(10), // The paginated list
+            'stats' => [
+                'total' => Student::count(),
+                'active' => Student::where('status', 'active')->count(),
+                'inactive' => Student::where('status', 'inactive')->count(),
+                'graduated' => Student::where('status', 'graduated')->count(),
+                'spillover' => Student::where('status', 'spillover')->count(),
+            ]
+        ]);
     }
 
     /**
@@ -38,7 +49,7 @@ class StudentController extends Controller
                     'department_id' => $request->department_id,
                     'phone' => $request->phone,
                     'is_active' => 1,
-                    'dob' => $request->date_of_birth,
+                    'dob' => $request->dob,
                     'faculty_id' => $request->faculty_id,
 
                 ]);
@@ -51,7 +62,8 @@ class StudentController extends Controller
                     'status'              => $request->status,
                     'mode_entry'          => $request->mode_entry,
                     'level'               => $request->level,
-                    'gender'            => $request->gender,
+                    'gender'              => $request->gender,
+                    'department_id'       => $request->department_id,
                 ]);
 
                 return $student->load('user');
@@ -62,7 +74,6 @@ class StudentController extends Controller
                 'message' => 'Student created successfully.',
                 'data'    => $student,
             ], 201);
-
         } catch (\Illuminate\Database\QueryException $e) {
             // Database-level errors: constraint violations, duplicate entries, connection issues
             Log::error('Database error while creating student', [
@@ -88,7 +99,6 @@ class StudentController extends Controller
                 'success' => false,
                 'message' => 'A database error occurred. Please try again later.',
             ], 500);
-
         } catch (\Exception $e) {
             // Catch-all for unexpected errors (logic errors, third-party failures, etc.)
             Log::critical('Unexpected error while creating student', [
@@ -120,9 +130,9 @@ class StudentController extends Controller
             return response()->json(['message' => 'Student not found'], 404);
         }
 
-        $data=[
+        $data = [
             "id" => $student->id,
-            "matric_number" =>$student->matric_number,
+            "matric_number" => $student->matric_number,
             "name" => $student?->user->name,
             "email" => $student->user->email,
             "department" => $student->user->department->name ?? 'Unassigned',
@@ -144,6 +154,7 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, Student $student)
     {
+
         try {
 
             DB::transaction(function () use ($request, $student) {
@@ -151,13 +162,11 @@ class StudentController extends Controller
                 $student->update($request->studentData());
 
                 $student->user->update($request->userData());
-
             });
 
             return response()->json(
                 $student->load('user')
             );
-
         } catch (\Throwable $e) {
 
             Log::error('Student update failed', [
@@ -205,6 +214,4 @@ class StudentController extends Controller
             'inactive' => $inactive,
         ]);
     }
-
-
 }
