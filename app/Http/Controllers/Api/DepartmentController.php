@@ -11,7 +11,29 @@ class DepartmentController extends Controller
     //Get all Department
     public function show(Request $request)
     {
-        $dept = Department::with('faculty')->get();
+        // 1. Get the sort option or fall back to 'name_asc' (Alphabetical A-Z) as a sensible default
+        $sort = $request->input('sort', 'name_asc');
+
+        $query = Department::with('faculty');
+
+        // 2. Apply sorting logic based on the parameter value
+        switch ($sort) {
+            case 'newest':
+                $query->latest(); // tracks created_at DESC
+                break;
+            case 'oldest':
+                $query->oldest(); // tracks created_at ASC
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'name_asc':
+            default:
+                $query->orderBy('name', 'asc');
+                break;
+        }
+
+        $dept = $query->get();
 
         if ($dept->isEmpty()) {
             return response()->json([
@@ -21,14 +43,15 @@ class DepartmentController extends Controller
             ], 404);
         }
 
+        // 3. Map out data using PHP's null-safe operator (?->) to prevent 500 errors if a faculty is missing
         $departments = $dept->map(function ($department) {
             return [
                 "id" => $department->id,
                 "name" => $department->name,
                 "faculty" => [
-                    "id" => $department->faculty->id,
-                    "name" => $department->faculty->name,
-                    "abbreviation" => $department->faculty->abbreviation,
+                    "id" => $department->faculty?->id ?? null,
+                    "name" => $department->faculty?->name ?? 'Unassigned',
+                    "abbreviation" => $department->faculty?->abbreviation ?? '—',
                 ],
             ];
         });

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Models\{Course, Student, Academic_session, CourseRegistration};
+
+use function Illuminate\Log\log;
 use function Pest\Laravel\json;
 
 use Illuminate\Validation\Rules\In;
@@ -17,15 +19,32 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-
-
+use RuntimeException;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::with('department')->get();
-        return response()->json($courses);
+        $courses = Course::query()->with('department')
+            // 1. Conditional Search
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->input('search');
+                $query->where('course_code', 'like', "%{$search}%")
+                    ->orWhere('course_title', 'like', "%{$search}%");
+            })
+            // 2. Conditional Status Filter
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->input('status'));
+            })
+            // 3. Conditional Sorting
+            ->when($request->input('sort') === 'newest', function ($query) {
+                $query->latest();
+            }, function ($query) {
+                $query->oldest(); // Default sorting if not 'newest'
+            });
+
+        // Best practice: Add pagination right here when data grows large
+        return response()->json($courses->get());
     }
 
     public function store(StoreCourseRequest $request)
@@ -58,10 +77,10 @@ class CourseController extends Controller
 
         $courses = Course::with('department')->where('department_id', $dept_Id)->where("level", $level)->where("semester", $semester)->get();
 
-        if(!$courses) {
+        if (!$courses) {
             return response()->json(["message" => "No courses found for the specified department and level"], 404);
         }
-        $data = $courses->map(function($course) {
+        $data = $courses->map(function ($course) {
             return [
                 "id" => $course->id,
                 "course_code" => $course->course_code,
@@ -108,11 +127,12 @@ class CourseController extends Controller
                 // Match semester per course dynamically
                 'course_id',
                 collect($validated['courses'])
-                    ->filter(fn($c) => CourseRegistration::where('student_id', $studentId)
-                        ->where('academic_session_id', $academicSession->id)
-                        ->where('course_id', $c['course_id'])
-                        ->where('semester', $c['semester'])
-                        ->exists()
+                    ->filter(
+                        fn($c) => CourseRegistration::where('student_id', $studentId)
+                            ->where('academic_session_id', $academicSession->id)
+                            ->where('course_id', $c['course_id'])
+                            ->where('semester', $c['semester'])
+                            ->exists()
                     )
                     ->pluck('course_id')
                     ->toArray()
@@ -149,7 +169,6 @@ class CourseController extends Controller
                 'message' => 'Course registration successful.',
                 'data'    => $registrations,
             ], 201);
-
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Course registration failed', [
@@ -161,6 +180,45 @@ class CourseController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Course registration failed. Please try again.',
+            ], 500);
+        }
+    }
+
+    public function toggleStatus(Request $request, Course $course): JsonResponse
+    {
+        try {
+            $request->validate([
+                'status' => ['required', 'in:Active,Inactive'],
+            ]);
+
+            $course->update([
+                'status' => $request->status,
+            ]);
+
+            if (! $course->wasChanged('status')) {
+                throw new RuntimeException('Course status was not updated.');
+            }
+
+            $course->refresh();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Course status updated successfully.',
+                'data'    => $course,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Error updating course status.', [
+                'course_id' => $course->id,
+                'request'   => $request->all(),
+                'exception' => $e,
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update course status.',
+                'error'   => config('app.debug')
+                    ? $e->getMessage()
+                    : 'Server Error',
             ], 500);
         }
     }

@@ -9,8 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
     protected $fillable = [
-        'course_code', 'course_title', 'unit',
-        'level', 'semester', 'is_elective', 'department_id'
+        'course_code',
+        'course_title',
+        'unit',
+        'level',
+        'semester',
+        'is_elective',
+        'department_id',
+        'status'
     ];
 
     protected function casts(): array

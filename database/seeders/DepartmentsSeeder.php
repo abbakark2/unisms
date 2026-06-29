@@ -17,23 +17,30 @@ class DepartmentsSeeder extends Seeder
         $engineeringId = DB::table('faculties')->where('name', 'Faculty of Engineering')->value('id');
         $fes           = DB::table('faculties')->where('name', 'Faculty of Environmental Studies')->value('id');
 
+        $now = now();
+
         DB::table('departments')->insert([
             // Science
-            ['name' => 'Computer Science',  'code' => 'CSC', 'faculty_id' => $scienceId],
-            ['name' => 'Mathematics',       'code' => 'MTH', 'faculty_id' => $scienceId],
-            ['name' => 'Physics',           'code' => 'PHY', 'faculty_id' => $scienceId],
+            ['name' => 'Computer Science',  'code' => 'CSC', 'faculty_id' => $scienceId, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Mathematics',       'code' => 'MTH', 'faculty_id' => $scienceId, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Physics',           'code' => 'PHY', 'faculty_id' => $scienceId, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Chemistry',         'code' => 'CHM', 'faculty_id' => $scienceId, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Biology',           'code' => 'BIO', 'faculty_id' => $scienceId, 'created_at' => $now, 'updated_at' => $now],
 
             // Engineering
-            ['name' => 'Electrical Engineering', 'code' => 'EEE', 'faculty_id' => $engineeringId],
-            ['name' => 'Mechanical Engineering', 'code' => 'MEE', 'faculty_id' => $engineeringId],
+            ['name' => 'Electrical Engineering', 'code' => 'EEE', 'faculty_id' => $engineeringId, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Mechanical Engineering', 'code' => 'MEE', 'faculty_id' => $engineeringId, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Civil Engineering',      'code' => 'CVE', 'faculty_id' => $engineeringId, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Chemical Engineering',   'code' => 'CHE', 'faculty_id' => $engineeringId, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Computer Engineering',   'code' => 'CSE', 'faculty_id' => $engineeringId, 'created_at' => $now, 'updated_at' => $now],
 
             // Environmental Studies
-            ['name' => 'Architecture',              'code' => 'ARC', 'faculty_id' => $fes],
-            ['name' => 'Building',                  'code' => 'BLD', 'faculty_id' => $fes],
-            ['name' => 'Fine Arts',                 'code' => 'FAR', 'faculty_id' => $fes],
-            ['name' => 'Industrial Design',         'code' => 'IND', 'faculty_id' => $fes],
-            ['name' => 'Geomatics',                 'code' => 'GEO', 'faculty_id' => $fes],
-            ['name' => 'Urban and Regional Planning', 'code' => 'URP', 'faculty_id' => $fes],
+            ['name' => 'Architecture',              'code' => 'ARC', 'faculty_id' => $fes, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Building',                  'code' => 'BLD', 'faculty_id' => $fes, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Fine Arts',                 'code' => 'FAR', 'faculty_id' => $fes, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Industrial Design',         'code' => 'IND', 'faculty_id' => $fes, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Geomatics',                 'code' => 'GEO', 'faculty_id' => $fes, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Urban and Regional Planning', 'code' => 'URP', 'faculty_id' => $fes, 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 }
